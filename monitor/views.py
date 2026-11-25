@@ -18,7 +18,7 @@ _stream = {"running": False, "index": 0}
 _lock = threading.Lock()
 
 
-@login_required
+
 def dashboard(request):
     bundle = load_artifact()
     metrics = bundle["metrics"] if bundle else None
@@ -31,7 +31,7 @@ def dashboard(request):
     return response
 
 
-@login_required
+
 @require_GET
 def stats(request):
     total = Transaction.objects.count()
@@ -81,7 +81,7 @@ def _replay_batch(batch_size=8):
         Transaction.objects.bulk_create(rows)
 
 
-@login_required
+
 @require_GET
 def transactions(request):
     if _stream["running"]:
