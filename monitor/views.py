@@ -2,6 +2,7 @@ import json
 import logging
 import math
 import threading
+import random
 
 import pandas as pd
 from django.contrib.auth.decorators import login_required
@@ -47,36 +48,83 @@ def stats(request):
     return response
 
 
+
 def _replay_batch(batch_size=8):
-    if not DATA.exists():
-        return
-    with _lock:
-        start = _stream["index"]
-        try:
-            df = pd.read_csv(DATA, skiprows=range(1, start + 1), nrows=batch_size)
-        except Exception:
-            logger.exception("Dataset replay failed")
-            return
-        if df.empty:
-            _stream["index"] = 0
-            return
-        _stream["index"] += len(df)
     bundle = load_artifact()
     if bundle is None:
         return
-    rows = []
-    for _, row in df.iterrows():
-        values = {key: float(row[key]) for key in FEATURES}
-        try:
-            probability, decision = predict_row(values, bundle)
-        except Exception:
-            logger.exception("Could not score a replay row")
-            continue
-        rows.append(Transaction(
-            dataset_time=float(row["Time"]), amount=float(row["Amount"]),
-            fraud_probability=probability, decision=decision,
-            actual_class=int(row["Class"]), source="dataset",
-        ))
+
+    # Use the Kaggle dataset when it is available.
+    if DATA.exists():
+        with _lock:
+            start = _stream["index"]
+            try:
+                df = pd.read_csv(
+                    DATA,
+                    skiprows=range(1, start + 1),
+                    nrows=batch_size
+                )
+            except Exception:
+                logger.exception("Dataset replay failed")
+                return
+
+            if df.empty:
+                _stream["index"] = 0
+                return
+
+            _stream["index"] += len(df)
+
+        rows = []
+        for _, row in df.iterrows():
+            values = {key: float(row[key]) for key in FEATURES}
+            try:
+                probability, decision = predict_row(values, bundle)
+                rows.append(Transaction(
+                    dataset_time=float(row["Time"]),
+                    amount=float(row["Amount"]),
+                    fraud_probability=probability,
+                    decision=decision,
+                    actual_class=int(row["Class"]),
+                    source="dataset",
+                ))
+            except Exception:
+                logger.exception("Could not score a replay row")
+
+    else:
+        # Safe synthetic demo data when the Kaggle CSV is unavailable.
+        with _lock:
+            if _stream["index"] >= 100:
+                _stream["running"] = False
+                return
+
+            start = _stream["index"]
+            count = min(batch_size, 100 - start)
+            _stream["index"] += count
+
+        rows = []
+        for i in range(count):
+            values = {}
+            for key in FEATURES:
+                if key == "Time":
+                    values[key] = float(start + i)
+                elif key == "Amount":
+                    values[key] = round(random.uniform(1, 500), 2)
+                else:
+                    values[key] = random.gauss(0, 1)
+
+            try:
+                probability, decision = predict_row(values, bundle)
+                rows.append(Transaction(
+                    dataset_time=values.get("Time"),
+                    amount=values["Amount"],
+                    fraud_probability=probability,
+                    decision=decision,
+                    actual_class=None,
+                    source="synthetic",
+                ))
+            except Exception:
+                logger.exception("Could not score a synthetic demo row")
+
     if rows:
         Transaction.objects.bulk_create(rows)
 
