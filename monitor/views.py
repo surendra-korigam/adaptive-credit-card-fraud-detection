@@ -103,14 +103,14 @@ def transactions(request):
     return response
 
 
-@login_required
+
 @require_POST
 def start_stream(request):
     _stream["running"] = True
     return JsonResponse({"running": True, "message": "Dataset replay started"})
 
 
-@login_required
+
 @require_POST
 def stop_stream(request):
     _stream["running"] = False
