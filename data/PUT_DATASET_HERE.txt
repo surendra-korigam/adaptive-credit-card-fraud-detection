@@ -1,0 +1,5 @@
+Download the Kaggle ULB Credit Card Fraud Detection dataset and put the extracted file here as:
+data/creditcard.csv
+
+Expected columns: Time, V1 ... V28, Amount, Class
+Do not rename or alter the column names.

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adaptive Fraud Detection | Django</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--muted:#9aabc4;--line:#26364f;--text:#edf4ff;--green:#31d0aa;--red:#ff637d;--amber:#ffbd59}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px Segoe UI,Arial}
+header{padding:24px 5%;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+h1{margin:0;font-size:24px}small,.muted{color:var(--muted)}main{max-width:1250px;margin:28px auto;padding:0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.value{font-size:30px;font-weight:700;margin-top:8px}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--green);color:#06231d}button.stop{background:#35445c;color:white}
+table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
+.tablewrap{overflow:auto}.pill{padding:5px 9px;border-radius:30px;font-size:12px;font-weight:700}.BLOCK{background:#542333;color:#ff9aab}.REVIEW{background:#4d3b1d;color:#ffd28a}.APPROVE{background:#164638;color:#8df0ce}
+.notice{padding:14px;border:1px solid var(--line);border-radius:10px;margin:15px 0;color:var(--muted)}.metrics{font-size:14px;line-height:1.9}
+</style></head><body>
+<header><div><h1>Adaptive Credit Card Fraud Detection</h1><small>Django · Kaggle ULB dataset · Stacking ensemble</small></div><div><span id="status" class="muted">● Offline</span> <form method="post" action="/accounts/logout/" style="display:inline;margin-left:14px">{% csrf_token %}<button class="stop" type="submit">Log out</button></form></div></header>
+<main>
+{% csrf_token %}
+{% if not dataset_exists %}<div class="notice">Dataset not found. Download the ULB Kaggle file <b>creditcard.csv</b> and place it inside the project's <b>data</b> folder, then run <code>python train_model.py</code>.</div>{% endif %}
+{% if not model_ready %}<div class="notice">Model is not trained yet. Put creditcard.csv in data/ and run <code>python train_model.py</code>.</div>{% endif %}
+<div class="grid">
+<div class="card"><div class="muted">Transactions replayed</div><div class="value" id="total">0</div></div>
+<div class="card"><div class="muted">Blocked by model</div><div class="value" id="blocked">0</div></div>
+<div class="card"><div class="muted">Sent for review</div><div class="value" id="review">0</div></div>
+<div class="card"><div class="muted">Actual fraud in replay</div><div class="value" id="fraud">0</div></div>
+</div>
+<div class="controls"><button onclick="control('/api/stream/start/')">▶ Start dataset replay</button><button class="stop" onclick="control('/api/stream/stop/')">■ Stop</button><button class="stop" onclick="loadAll()">↻ Refresh</button></div>
+<div class="card" style="margin-bottom:16px"><h3>Model evaluation (held-out 20%)</h3>
+{% if metrics %}<div class="metrics">Rows: {{metrics.rows}} · Train: {{metrics.train_rows}} · Test: {{metrics.test_rows}} · Fraud rows: {{metrics.fraud_rows}}<br>
+Accuracy: {{metrics.accuracy|floatformat:4}} · Precision: {{metrics.precision|floatformat:4}} · Recall: {{metrics.recall|floatformat:4}} · F1: {{metrics.f1|floatformat:4}} · PR-AUC: {{metrics.pr_auc|floatformat:4}}<br>Confusion matrix: {{metrics.confusion_matrix}}</div>{% else %}<div class="muted">Metrics appear after model training.</div>{% endif %}</div>
+<div class="card"><h3>Live transaction feed</h3><div class="muted">The feed replays real rows from the Kaggle dataset. Actual labels are shown for demo/evaluation only; a production system would not know them at prediction time.</div>
+<div class="tablewrap"><table><thead><tr><th>ID</th><th>Time</th><th>Amount</th><th>Risk</th><th>Decision</th><th>Dataset label</th></tr></thead><tbody id="rows"><tr><td colspan="6">No transactions yet. Start dataset replay.</td></tr></tbody></table></div></div>
+</main>
+<script>
+async function control(url){
+ try{
+  const token=document.querySelector('[name=csrfmiddlewaretoken]').value;
+  const response=await fetch(url,{method:'POST',headers:{'X-CSRFToken':token}});
+  if(!response.ok){const message=await response.text();throw new Error(`HTTP ${response.status}: ${message}`)}
+  await loadAll();
+ }catch(e){console.error('Replay control failed:',e);document.getElementById('status').textContent='● Error starting replay';alert('Could not start/stop replay. Check the Django terminal for details. '+e.message)}
+}
+async function loadAll(){
+ try{
+ let s=await (await fetch('/api/stats/')).json();total.textContent=s.total;blocked.textContent=s.blocked;review.textContent=s.review;fraud.textContent=s.actual_fraud;status.textContent=s.streaming?'● Replaying dataset':'● Stopped';
+ let d=await (await fetch('/api/transactions/')).json();
+ rows.innerHTML=d.transactions.map(t=>`<tr><td>${t.id}</td><td>${t.time}</td><td>₹${t.amount.toFixed(2)}</td><td>${t.risk}%</td><td><span class="pill ${t.decision}">${t.decision}</span></td><td>${t.actual}</td></tr>`).join('')||'<tr><td colspan="6">No transactions yet</td></tr>';
+ }catch(e){status.textContent='● Server unavailable'}
+}
+document.addEventListener('DOMContentLoaded',()=>{loadAll();setInterval(loadAll,2000)});
+</script></body></html>
