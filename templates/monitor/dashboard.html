@@ -101,24 +101,6 @@ th{color:var(--muted)}
 </div>
 
 <div class="card">
-    <h3>Manual Transaction Scoring</h3>
-    <p class="muted">
-        Enter an amount. The remaining model features are generated
-        synthetically for this demonstration.
-    </p>
-
-    <form id="scoreForm">
-        <label for="amount">Transaction amount (₹)</label>
-        <input id="amount" type="number" min="0" step="0.01"
-               placeholder="Enter transaction amount" required>
-        <br><br>
-        <button type="submit">Score Transaction</button>
-    </form>
-
-    <p id="scoreResult" class="muted"></p>
-</div>
-
-<div class="card">
     <h3>Model Evaluation (Held-out 20%)</h3>
 
     {% if metrics %}
@@ -185,52 +167,6 @@ async function control(url) {
         alert('Replay control failed: ' + error.message);
     }
 }
-
-document.getElementById('scoreForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const amount = Number(document.getElementById('amount').value);
-    if (!Number.isFinite(amount) || amount < 0) {
-        alert('Enter a valid transaction amount.');
-        return;
-    }
-
-    const payload = {
-        Time: Math.floor(Date.now() / 1000),
-        Amount: amount
-    };
-
-    for (let i = 1; i <= 28; i++) {
-        payload['V' + i] = (Math.random() * 2 - 1);
-    }
-
-    const result = document.getElementById('scoreResult');
-    result.textContent = 'Scoring transaction...';
-
-    try {
-        const response = await fetch('/api/score/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken()
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Scoring failed');
-
-        result.textContent =
-            'Prediction: ' + data.decision +
-            ' | Risk: ' + data.risk + '%';
-
-        document.getElementById('amount').value = '';
-        await loadAll();
-
-    } catch (error) {
-        result.textContent = 'Error: ' + error.message;
-    }
-});
 
 async function sendFeedback(id, label) {
     if (!confirm('Submit this feedback for transaction #' + id + '?')) return;
