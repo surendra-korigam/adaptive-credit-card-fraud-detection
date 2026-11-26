@@ -165,7 +165,7 @@ def stop_stream(request):
     return JsonResponse({"running": False})
 
 
-@login_required
+
 @require_POST
 def score_transaction(request):
     try:
@@ -197,7 +197,7 @@ def score_transaction(request):
         return JsonResponse({"error": "Unable to score transaction at this time."}, status=500)
 
 
-@login_required
+
 @require_POST
 def feedback(request):
     try:
