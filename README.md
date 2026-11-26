@@ -53,3 +53,5 @@ Click **Start dataset replay** to stream rows from the CSV through the trained m
 - Decision thresholds are demo defaults: APPROVE below 20%, REVIEW from 20% to below 50%, BLOCK at 50% and above. Tune thresholds using validation data and business costs before production.
 - This Django edition currently implements Decision Tree, Random Forest, Extra Trees and a Stacking Classifier. CNN/LSTM are listed in the original presentation but are not implemented in this edition; do not claim they are implemented unless they are added and trained.
 - This is an educational demo, not a production payment authorization system.
+
+- #LIVE URL:https://adaptive-credit-card-fraud-detection.onrender.com/
