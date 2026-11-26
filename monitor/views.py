@@ -93,12 +93,12 @@ def _replay_batch(batch_size=8):
     else:
         # Safe synthetic demo data when the Kaggle CSV is unavailable.
         with _lock:
-            if _stream["index"] >= 100:
+            if _stream["index"] >= 1000:
                 _stream["running"] = False
                 return
 
             start = _stream["index"]
-            count = min(batch_size, 100 - start)
+            count = min(batch_size, 1000 - start)
             _stream["index"] += count
 
         rows = []
