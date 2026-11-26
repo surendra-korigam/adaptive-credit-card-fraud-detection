@@ -3,520 +3,308 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Adaptive Credit Card Fraud Detection</title>
 
 <style>
 :root {
-    --bg: #0b1220;
-    --panel: #121d30;
-    --muted: #9aabc4;
-    --line: #26364f;
-    --text: #edf4ff;
-    --green: #31d0aa;
-    --red: #ff637d;
-    --amber: #ffbd59;
+    --bg:#0b1220;
+    --panel:#121d30;
+    --muted:#9aabc4;
+    --line:#26364f;
+    --text:#edf4ff;
+    --green:#31d0aa;
 }
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font: 15px Segoe UI, Arial, sans-serif;
-}
-
-header {
-    padding: 24px 5%;
-    border-bottom: 1px solid var(--line);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-h1 {
-    margin: 0;
-    font-size: 24px;
-}
-
-h3 {
-    margin-top: 0;
-}
-
-small,
-.muted {
-    color: var(--muted);
-}
-
-main {
-    max-width: 1250px;
-    margin: 28px auto;
-    padding: 0 20px;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 14px;
-}
-
-.card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 18px;
-}
-
-.value {
-    font-size: 30px;
-    font-weight: 700;
-    margin-top: 8px;
-}
-
-.controls {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin: 18px 0;
-}
-
-button {
-    border: 0;
-    border-radius: 8px;
-    padding: 11px 16px;
-    font-weight: 700;
-    cursor: pointer;
-    background: var(--green);
-    color: #06231d;
-}
-
-button.stop {
-    background: #35445c;
-    color: white;
-}
-
-button:hover,
-.login-link:hover {
-    opacity: 0.85;
-}
-
-.login-link {
-    display: inline-block;
-    margin-left: 10px;
-    padding: 11px 16px;
-    border-radius: 8px;
-    background: #35445c;
-    color: white;
-    text-decoration: none;
-    font-weight: 700;
-}
-
-.login-link:hover {
-    background: #465a78;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 720px;
-}
-
-th,
-td {
-    text-align: left;
-    padding: 12px;
-    border-bottom: 1px solid var(--line);
-}
-
-th {
-    color: var(--muted);
-    font-weight: 600;
-}
-
-.tablewrap {
-    overflow-x: auto;
-}
-
-.pill {
-    padding: 5px 9px;
-    border-radius: 30px;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.BLOCK {
-    background: #542333;
-    color: #ff9aab;
-}
-
-.REVIEW {
-    background: #4d3b1d;
-    color: #ffd28a;
-}
-
-.APPROVE {
-    background: #164638;
-    color: #8df0ce;
-}
-
-.notice {
-    padding: 14px;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    margin: 15px 0;
-    color: var(--muted);
-}
-
-.metrics {
-    font-size: 14px;
-    line-height: 1.9;
-}
-
-@media (max-width: 600px) {
-    header {
-        padding: 18px 5%;
-    }
-
-    h1 {
-        font-size: 20px;
-    }
-}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px Segoe UI,Arial}
+header{padding:24px 5%;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+h1{margin:0;font-size:24px}
+small,.muted{color:var(--muted)}
+main{max-width:1250px;margin:28px auto;padding:0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.value{font-size:30px;font-weight:700;margin-top:8px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;background:var(--green);color:#06231d}
+button.stop{background:#35445c;color:white}
+button.feedback{background:#35445c;color:white;padding:7px 10px;margin:2px}
+input{padding:11px;border:1px solid var(--line);border-radius:8px;background:#0b1220;color:white;width:100%;max-width:300px}
+label{display:block;margin:12px 0 6px}
+table{width:100%;border-collapse:collapse;min-width:850px}
+th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line)}
+th{color:var(--muted)}
+.tablewrap{overflow-x:auto}
+.pill{padding:5px 9px;border-radius:30px;font-size:12px;font-weight:700}
+.BLOCK{background:#542333;color:#ff9aab}
+.REVIEW{background:#4d3b1d;color:#ffd28a}
+.APPROVE{background:#164638;color:#8df0ce}
+.notice{padding:14px;border:1px solid var(--line);border-radius:10px;margin:15px 0;color:var(--muted)}
+.metrics{font-size:14px;line-height:1.9}
 </style>
 </head>
 
 <body>
 
 <header>
-
     <div>
         <h1>Adaptive Credit Card Fraud Detection</h1>
-        <small>
-            Django · Kaggle ULB dataset · Stacking ensemble
-        </small>
+        <small>Django · Kaggle ULB dataset · Stacking ensemble</small>
     </div>
-
     <div>
-
         <span id="status" class="muted">● Offline</span>
-
-        <a href="/accounts/login/" class="login-link">
-            Log in
-        </a>
-
-        <form method="post"
-              action="/accounts/logout/"
-              style="display:inline; margin-left:10px">
-
-            {% csrf_token %}
-
-            <button class="stop" type="submit">
-                Log out
-            </button>
-
-        </form>
-
+        <span class="muted"> · Public Demo</span>
     </div>
-
 </header>
 
 <main>
 
-    {% csrf_token %}
+{% csrf_token %}
 
-    {% if not dataset_exists %}
+{% if not dataset_exists %}
+<div class="notice">
+    Demo mode: Kaggle creditcard.csv is unavailable.
+    Synthetic demo transactions are generated using the trained model.
+    Their actual labels are UNKNOWN.
+</div>
+{% endif %}
 
-    <div class="notice">
-        <strong>Demo mode:</strong>
-        Kaggle creditcard.csv is not available.
-        Synthetic demo transactions are generated using the trained
-        model. Actual labels for synthetic transactions are shown
-        as UNKNOWN.
-    </div>
+{% if not model_ready %}
+<div class="notice">
+    Model is not ready. Configure the trained model artifact before
+    using transaction scoring.
+</div>
+{% endif %}
 
-    {% endif %}
-
-    {% if not model_ready %}
-
-    <div class="notice">
-        Model is not ready. Please configure the trained model
-        artifact before starting the demo.
-    </div>
-
-    {% endif %}
-
-
-    <!-- Transaction statistics -->
-
-    <div class="grid">
-
-        <div class="card">
-            <div class="muted">Transactions replayed</div>
-            <div class="value" id="total">0</div>
-        </div>
-
-        <div class="card">
-            <div class="muted">Blocked by model</div>
-            <div class="value" id="blocked">0</div>
-        </div>
-
-        <div class="card">
-            <div class="muted">Sent for review</div>
-            <div class="value" id="review">0</div>
-        </div>
-
-        <div class="card">
-            <div class="muted">Actual fraud in replay</div>
-            <div class="value" id="fraud">0</div>
-        </div>
-
-    </div>
-
-
-    <!-- Replay controls -->
-
-    <div class="controls">
-
-        <button onclick="control('/api/stream/start/')">
-            ▶ Start demo replay
-        </button>
-
-        <button class="stop"
-                onclick="control('/api/stream/stop/')">
-            ■ Stop
-        </button>
-
-        <button class="stop" onclick="loadAll()">
-            ↻ Refresh
-        </button>
-
-    </div>
-
-
-    <!-- Model evaluation -->
-
-    <div class="card" style="margin-bottom:16px">
-
-        <h3>Model Evaluation (Held-out 20%)</h3>
-
-        {% if metrics %}
-
-        <div class="metrics">
-
-            Rows: {{ metrics.rows }}
-            · Train: {{ metrics.train_rows }}
-            · Test: {{ metrics.test_rows }}
-            · Fraud rows: {{ metrics.fraud_rows }}
-
-            <br>
-
-            Accuracy: {{ metrics.accuracy|floatformat:4 }}
-            · Precision: {{ metrics.precision|floatformat:4 }}
-            · Recall: {{ metrics.recall|floatformat:4 }}
-            · F1: {{ metrics.f1|floatformat:4 }}
-            · PR-AUC: {{ metrics.pr_auc|floatformat:4 }}
-
-            <br>
-
-            Confusion matrix: {{ metrics.confusion_matrix }}
-
-        </div>
-
-        {% else %}
-
-        <div class="muted">
-            Metrics appear after model training.
-        </div>
-
-        {% endif %}
-
-    </div>
-
-
-    <!-- Live transaction feed -->
-
+<div class="grid">
     <div class="card">
-
-        <h3>Live Transaction Feed</h3>
-
-        <div class="muted" style="margin-bottom:15px">
-
-            Transactions are scored by the trained machine learning
-            model. Synthetic demo records have UNKNOWN actual labels.
-            Kaggle dataset records display their original labels.
-
-            A production fraud detection system would not know actual
-            fraud labels at prediction time.
-
-        </div>
-
-        <div class="tablewrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>ID</th>
-                        <th>Time</th>
-                        <th>Amount</th>
-                        <th>Risk</th>
-                        <th>Decision</th>
-                        <th>Actual Label</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="rows">
-
-                    <tr>
-                        <td colspan="6">
-                            No transactions yet. Start demo replay.
-                        </td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
+        <div class="muted">Transactions replayed</div>
+        <div class="value" id="total">0</div>
     </div>
+    <div class="card">
+        <div class="muted">Blocked by model</div>
+        <div class="value" id="blocked">0</div>
+    </div>
+    <div class="card">
+        <div class="muted">Sent for review</div>
+        <div class="value" id="review">0</div>
+    </div>
+    <div class="card">
+        <div class="muted">Actual fraud labels</div>
+        <div class="value" id="fraud">0</div>
+    </div>
+</div>
+
+<div class="controls">
+    <button onclick="control('/api/stream/start/')">▶ Start demo replay</button>
+    <button class="stop" onclick="control('/api/stream/stop/')">■ Stop</button>
+    <button class="stop" onclick="loadAll()">↻ Refresh</button>
+</div>
+
+<div class="card">
+    <h3>Manual Transaction Scoring</h3>
+    <p class="muted">
+        Enter an amount. The remaining model features are generated
+        synthetically for this demonstration.
+    </p>
+
+    <form id="scoreForm">
+        <label for="amount">Transaction amount (₹)</label>
+        <input id="amount" type="number" min="0" step="0.01"
+               placeholder="Enter transaction amount" required>
+        <br><br>
+        <button type="submit">Score Transaction</button>
+    </form>
+
+    <p id="scoreResult" class="muted"></p>
+</div>
+
+<div class="card">
+    <h3>Model Evaluation (Held-out 20%)</h3>
+
+    {% if metrics %}
+    <div class="metrics">
+        Rows: {{metrics.rows}} · Train: {{metrics.train_rows}}
+        · Test: {{metrics.test_rows}} · Fraud rows: {{metrics.fraud_rows}}
+        <br>
+        Accuracy: {{metrics.accuracy|floatformat:4}}
+        · Precision: {{metrics.precision|floatformat:4}}
+        · Recall: {{metrics.recall|floatformat:4}}
+        · F1: {{metrics.f1|floatformat:4}}
+        · PR-AUC: {{metrics.pr_auc|floatformat:4}}
+        <br>
+        Confusion matrix: {{metrics.confusion_matrix}}
+    </div>
+    {% else %}
+    <div class="muted">Metrics appear after model training.</div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>Live Transaction Feed</h3>
+    <p class="muted">
+        Model predictions are not the same as confirmed fraud labels.
+        Synthetic transactions display UNKNOWN as their actual label.
+    </p>
+
+    <div class="tablewrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Time</th>
+                    <th>Amount</th>
+                    <th>Risk</th>
+                    <th>Decision</th>
+                    <th>Actual label</th>
+                    <th>Feedback</th>
+                </tr>
+            </thead>
+            <tbody id="rows">
+                <tr><td colspan="7">No transactions yet.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 </main>
 
-
 <script>
+function csrfToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
 
 async function control(url) {
-
     try {
-
-        const token = document.querySelector(
-            '[name=csrfmiddlewaretoken]'
-        ).value;
-
         const response = await fetch(url, {
             method: 'POST',
+            headers: {'X-CSRFToken': csrfToken()}
+        });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        await loadAll();
+    } catch (error) {
+        alert('Replay control failed: ' + error.message);
+    }
+}
+
+document.getElementById('scoreForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const amount = Number(document.getElementById('amount').value);
+    if (!Number.isFinite(amount) || amount < 0) {
+        alert('Enter a valid transaction amount.');
+        return;
+    }
+
+    const payload = {
+        Time: Math.floor(Date.now() / 1000),
+        Amount: amount
+    };
+
+    for (let i = 1; i <= 28; i++) {
+        payload['V' + i] = (Math.random() * 2 - 1);
+    }
+
+    const result = document.getElementById('scoreResult');
+    result.textContent = 'Scoring transaction...';
+
+    try {
+        const response = await fetch('/api/score/', {
+            method: 'POST',
             headers: {
-                'X-CSRFToken': token
-            }
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken()
+            },
+            body: JSON.stringify(payload)
         });
 
-        if (!response.ok) {
-            throw new Error('HTTP ' + response.status);
-        }
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Scoring failed');
 
+        result.textContent =
+            'Prediction: ' + data.decision +
+            ' | Risk: ' + data.risk + '%';
+
+        document.getElementById('amount').value = '';
         await loadAll();
 
     } catch (error) {
-
-        console.error('Replay control failed:', error);
-
-        document.getElementById('status').textContent =
-            '● Replay error';
-
-        alert(
-            'Could not start or stop replay. ' + error.message
-        );
-
+        result.textContent = 'Error: ' + error.message;
     }
+});
 
-}
-
-
-async function loadAll() {
+async function sendFeedback(id, label) {
+    if (!confirm('Submit this feedback for transaction #' + id + '?')) return;
 
     try {
+        const response = await fetch('/api/feedback/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken()
+            },
+            body: JSON.stringify({
+                transaction_id: id,
+                is_fraud: label
+            })
+        });
 
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Feedback failed');
+
+        alert('Feedback saved.');
+    } catch (error) {
+        alert('Could not save feedback: ' + error.message);
+    }
+}
+
+async function loadAll() {
+    try {
         const statsResponse = await fetch('/api/stats/');
-
-        if (!statsResponse.ok) {
-            throw new Error('Statistics request failed');
-        }
+        if (!statsResponse.ok) throw new Error('Stats request failed');
 
         const s = await statsResponse.json();
 
         document.getElementById('total').textContent = s.total;
-
-        document.getElementById('blocked').textContent =
-            s.blocked;
-
-        document.getElementById('review').textContent =
-            s.review;
-
-        document.getElementById('fraud').textContent =
-            s.actual_fraud;
-
+        document.getElementById('blocked').textContent = s.blocked;
+        document.getElementById('review').textContent = s.review;
+        document.getElementById('fraud').textContent = s.actual_fraud;
         document.getElementById('status').textContent =
-            s.streaming
-                ? '● Replaying demo'
-                : '● Stopped';
+            s.streaming ? '● Replaying demo' : '● Stopped';
 
-
-        const transactionResponse = await fetch(
-            '/api/transactions/'
-        );
-
-        if (!transactionResponse.ok) {
-            throw new Error('Transaction request failed');
-        }
+        const transactionResponse = await fetch('/api/transactions/');
+        if (!transactionResponse.ok) throw new Error('Feed request failed');
 
         const d = await transactionResponse.json();
 
-        const rows = document.getElementById('rows');
-
-        rows.innerHTML = d.transactions.map(t => `
-
-            <tr>
-
-                <td>${t.id}</td>
-
-                <td>${t.time}</td>
-
-                <td>₹${Number(t.amount).toFixed(2)}</td>
-
-                <td>${Number(t.risk).toFixed(2)}%</td>
-
-                <td>
-                    <span class="pill ${t.decision}">
-                        ${t.decision}
-                    </span>
-                </td>
-
-                <td>${t.actual}</td>
-
-            </tr>
-
-        `).join('') ||
-
-        '<tr><td colspan="6">No transactions yet</td></tr>';
+        document.getElementById('rows').innerHTML =
+            d.transactions.map(t => `
+                <tr>
+                    <td>${t.id}</td>
+                    <td>${t.time}</td>
+                    <td>₹${Number(t.amount).toFixed(2)}</td>
+                    <td>${Number(t.risk).toFixed(2)}%</td>
+                    <td><span class="pill ${t.decision}">${t.decision}</span></td>
+                    <td>${t.actual}</td>
+                    <td>
+                        <button class="feedback"
+                            onclick="sendFeedback(${t.id},1)">Fraud</button>
+                        <button class="feedback"
+                            onclick="sendFeedback(${t.id},0)">Genuine</button>
+                    </td>
+                </tr>
+            `).join('') ||
+            '<tr><td colspan="7">No transactions yet.</td></tr>';
 
     } catch (error) {
-
-        console.error('Dashboard update failed:', error);
-
-        document.getElementById('status').textContent =
-            '● Server unavailable';
-
+        document.getElementById('status').textContent = '● Server unavailable';
+        console.error(error);
     }
-
 }
 
-
-document.addEventListener('DOMContentLoaded', function () {
-
+document.addEventListener('DOMContentLoaded', () => {
     loadAll();
-
     setInterval(loadAll, 2000);
-
 });
-
 </script>
 
 </body>
